@@ -5,13 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>CS438 Demo</title>
     <link rel="stylesheet" type="text/css" href="style.css">
-    <script language="JavaScript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.2.1/math.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.2.1/math.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href='https://fonts.googleapis.com/css?family=Bebas Neue' rel='stylesheet'>
 </head>
 <body>
-
+<div>
     <canvas id="gl_surface" tabindex="0">
         Your browser does not support HTML5
     </canvas>
+    <div id="overlay" class="container fade-in-title">
+        <h1 id="title" class="text-center"></h1>
+        <div class="text-center">
+            <img src="images/profile.jpeg" width = "200" height = "200" class="rounded-circle" alt="Danzel Serrano">
+        </div>
+        <h4 id="bio" class="text-center">M.S. Data Science (Computational Track) <br> B.S. Computer Science (Minor in Applied Mathematics)</h4>
+    </div>
+</div>
     <div id="shaders" hidden>
         <p id="vertex-shader">
             attribute vec4 a_position;
@@ -56,15 +66,15 @@
                 vec4 h = e + l;
                 h = normalize(h);
 
-                float L_i = 2.0;
+                float L_i = 4.5;
 
-                float k_d = 1.0;
+                float k_d = 4.0;
                 float d = length(u_light - v_position);
 
-                float q = 0.1;
-                float k_s = 1.0;
+                float q = 0.5;
+                float k_s = 5.0;
 
-                float k_a = 1.0;
+                float k_a = 0.3;
 
                 float L_d = k_d * max(0.0,dot(v_normal,l.xyz)) * (L_i / (d * d));
                 float L_s = k_s * pow(max(0.0,dot(v_normal,h.xyz)),q) * (L_i / (d * d));

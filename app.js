@@ -20,12 +20,12 @@ var x_delta = 0.01;
 var y_delta = 0.01;
 var z_delta = 0.01;
 
-var light_position = [0.0,5.0,-2.0,0.0];
+var light_position = [0.0,1.0,0.0,0.0];
 
 var matrix = mat4.identity();
 
-let c1 = [Math.random()*0.75,Math.random()*0.75,Math.random()*0.75,1.0]
-let c2 = [Math.random()*0.75,Math.random()*0.75,Math.random()*0.75,1.0]
+let c1 = [Math.random()*0.5,Math.random()*0.5,Math.random()*0.5,1.0]
+let c2 = [Math.random()*0.5,Math.random()*0.5,Math.random()*0.5,1.0]
 let c3 = [Math.random()*0.75,Math.random()*0.75,Math.random()*0.75,1.0]
 let c4 = [Math.random()*0.75,Math.random()*0.75,Math.random()*0.75,1.0]
 let c5 = [Math.random()*0.75,Math.random()*0.75,Math.random()*0.75,1.0]
@@ -105,8 +105,10 @@ function floor(gl){
 
     var colors = [
         //Floor
-        floor_color,floor_color,floor_color,
-        floor_color,floor_color,floor_color,
+        // floor_color,floor_color,floor_color,
+        // floor_color,floor_color,floor_color,
+        c2,c2,c2,
+        c2,c2,c2
     ];
 
     for(let i = 0; i < vertices.length; i++) {
@@ -189,6 +191,10 @@ function main(){
         console.log("Webgl don't work you donut");
         return;
     }
+
+    var titleElement = document.querySelector("#title");
+    var titleNode = document.createTextNode("  Danzel Serrano");
+    titleElement.appendChild(titleNode);
 
     var vertexShader = createShader(gl,gl.VERTEX_SHADER,vertexShaderSource);
     var fragmentShader = createShader(gl,gl.FRAGMENT_SHADER,fragmentShaderSource);
