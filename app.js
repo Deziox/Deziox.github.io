@@ -20,7 +20,7 @@ var x_delta = 0.01;
 var y_delta = 0.01;
 var z_delta = 0.01;
 
-var light_position = [0.0,1.0,0.0,0.0];
+var light_position = [0.0,0.0,0.0,1.0];
 
 var matrix = mat4.identity();
 
@@ -170,8 +170,8 @@ function keyDownCheck(e) {
     }else{
         console.log(e.key);
     }
-    console.log(position);
-    console.log(matrix);
+    // console.log(position);
+    // console.log(matrix);
 }
 
 function main(){
@@ -285,14 +285,14 @@ function main(){
         matrix = mat4.transpose(matrix);
         gl.uniformMatrix4fv(matrixLocation, false, matrix);
 
-        gl.uniform4fv(lightLocation,light_position);
+        gl.uniform4fv(lightLocation,mat4.matvec(matrix,light_position));
         gl.uniform4fv(eyeLocation,[...position, 0.0]);
 
         // pass aspect ratio uniform
         gl.uniform1f(aspectRatioLocation,(gl.canvas.width/gl.canvas.height));
 
         // Draw Geometry
-        gl.uniformMatrix3fv(normalMatrixLocation, false, mat3.inverse(mat4.dropDim(cubeModelTransform)));
+        gl.uniformMatrix3fv(normalMatrixLocation, false, mat4.dropDim(mat4.inverse(matrix)));
         var primitiveType = gl.TRIANGLES;
         var offset = 0;
         var count = 36;

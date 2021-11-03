@@ -132,6 +132,13 @@ var mat3 = {
             A1[2][0],A1[2][1],A1[2][2],
         ]);
         return A2;
+    },
+    matvec: function(A,x){
+        return[
+            A[0 * 3 + 0] * x[0] + A[0 * 3 + 1] * x[1] + A[0 * 3 + 2] * x[2],
+            A[1 * 3 + 0] * x[0] + A[1 * 3 + 1] * x[1] + A[1 * 3 + 2] * x[2],
+            A[2 * 3 + 0] * x[0] + A[2 * 3 + 1] * x[1] + A[2 * 3 + 2] * x[2]
+        ];
     }
 }
 
@@ -144,10 +151,4 @@ var vec4 = {
             v[3]
         ];
     }
-}
-
-function lookAt( eye, at, up )
-{
-
-    return result;
 }

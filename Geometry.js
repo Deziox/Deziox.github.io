@@ -87,24 +87,32 @@ var Geometry = {
         for(let v = 0; v < scaled.length; v++){
             ret.push(mat4.matvec(transform,scaled[v]))
         }
+        var N = mat3.transpose(mat3.inverse(mat4.dropDim(transform)));
+        var backNormalT = mat3.matvec(N,backNormal);
+        var leftNormalT = mat3.matvec(N,leftNormal);
+        var upNormalT = mat3.matvec(N,upNormal);
+        var rightNormalT = mat3.matvec(N,rightNormal);
+        var downNormalT = mat3.matvec(N,downNormal);
+        var frontNormalT = mat3.matvec(N,frontNormal);
+
         var normals = [
             // back
-            backNormal,backNormal,backNormal,backNormal,backNormal,backNormal,
+            backNormalT,backNormalT,backNormalT,backNormalT,backNormalT,backNormalT,
 
             // left side
-            leftNormal,leftNormal,leftNormal,leftNormal,leftNormal,leftNormal,
+            leftNormalT,leftNormalT,leftNormalT,leftNormalT,leftNormalT,leftNormalT,
 
             // top
-            upNormal,upNormal,upNormal,upNormal,upNormal,upNormal,
+            upNormalT,upNormalT,upNormalT,upNormalT,upNormalT,upNormalT,
 
             // right side
-            rightNormal,rightNormal,rightNormal,rightNormal,rightNormal,rightNormal,
+            rightNormalT,rightNormalT,rightNormalT,rightNormalT,rightNormalT,rightNormalT,
 
             // bottom
-            downNormal,downNormal,downNormal,downNormal,downNormal,downNormal,
+            downNormalT,downNormalT,downNormalT,downNormalT,downNormalT,downNormalT,
 
             // front
-            frontNormal,frontNormal,frontNormal,frontNormal,frontNormal,frontNormal
+            frontNormalT,frontNormalT,frontNormalT,frontNormalT,frontNormalT,frontNormalT
         ];
         return [ret, normals, transform]
     },
