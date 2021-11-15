@@ -20,7 +20,7 @@ var x_delta = 0.01;
 var y_delta = 0.01;
 var z_delta = 0.01;
 
-var light_position = [0.0,0.0,0.0,1.0];
+var light_position = [0.0,1.0,-2.0,1.0];
 
 var matrix = mat4.identity();
 
@@ -63,26 +63,34 @@ function createProgram(gl, vertexShader, fragmentShader){
 }
 
 function setGeometry(gl){
-    var cube1 = Geometry.cube(1.0,cube_position,cube_rotation);
-    // var cube2 = Geometry.cube(0.2,[-1.0,0.0,-2.0],[0.0,0.0,0.0]);
-    var vertices = [...cube1[0]];
-    var normals = [...cube1[1]];
+    // var cube1 = Geometry.cube(1.0,cube_position,cube_rotation);
+    // var vertices = [...cube1[0]];
+    // var normals = [...cube1[1]];
+    //
+    // var colors = [
+    //     c1,c1,c1,
+    //     c1,c1,c1,
+    //     c1,c1,c1,
+    //     c1,c1,c1,
+    //     c1,c1,c1,
+    //     c1,c1,c1,
+    //     c1,c1,c1,
+    //     c1,c1,c1,
+    //     c1,c1,c1,
+    //     c1,c1,c1,
+    //     c1,c1,c1,
+    //     c1,c1,c1,
+    // ];
+    // console.log(Geometry.sphere(12,24,1.0));
+    // var sphere1 = Geometry.sphere(12,24,1.0);
+    var sphere1 = Geometry.icosahedron(0.4,cube_position,cube_rotation);
+    var vertices = [...sphere1[0]];
+    var normals = [...sphere1[1]];
 
-    var colors = [
-        c1,c1,c1,
-        c1,c1,c1,
-        c1,c1,c1,
-        c1,c1,c1,
-        c1,c1,c1,
-        c1,c1,c1,
-        c1,c1,c1,
-        c1,c1,c1,
-        c1,c1,c1,
-        c1,c1,c1,
-        c1,c1,c1,
-        c1,c1,c1,
-    ];
-
+    var colors = [];
+    for(let i = 0; i < vertices.length; i++){
+        colors.push(c1);
+    }
     for(let i = 0; i < vertices.length; i++) {
         for (let j = 0; j < vertices[0].length; j++) {
             posColorNorm.push(vertices[i][j])
@@ -95,7 +103,7 @@ function setGeometry(gl){
         }
         // console.log(posColorNorm);
     }
-    return cube1[2];
+    return sphere1[2];
 }
 
 function floor(gl){
@@ -170,8 +178,10 @@ function keyDownCheck(e) {
     }else{
         console.log(e.key);
     }
-    // console.log(position);
-    // console.log(matrix);
+
+    console.log(matrix);
+    console.log(mat4.matvec(matrix,light_position))
+    console.log(position);
 }
 
 function main(){
@@ -295,11 +305,10 @@ function main(){
         gl.uniformMatrix3fv(normalMatrixLocation, false, mat4.dropDim(mat4.inverse(matrix)));
         var primitiveType = gl.TRIANGLES;
         var offset = 0;
-        var count = 36;
+        var count = posColorNorm.length / 3;
         gl.drawArrays(primitiveType, offset, count);
 
         // Draw Floor
-        // gl.uniformMatrix3fv(normalMatrixLocation, false, mat3.inverse(mat4.dropDim(matrix)));
         var primitiveType = gl.TRIANGLES;
         var offset = 36;
         var count = 6;

@@ -150,5 +150,54 @@ var vec4 = {
             v[2] * a,
             v[3]
         ];
+    },
+    lerp: function(u,v,s=0.5){
+        u_s = [
+            u[0] * (1-s),
+            u[1] * (1-s),
+            u[2] * (1-s),
+            u[3]
+        ];
+        v_s = [
+            v[0] * s,
+            v[1] * s,
+            v[2] * s,
+            v[3]
+        ];
+        ret = [
+            u[0] + v[0],
+            u[1] + v[1],
+            u[2] + v[2],
+            u[3]
+        ]
+        return ret;
+    },
+    add: function(u,v){
+        return [
+            u[0] + v[0],
+            u[1] + v[1],
+            u[2] + v[2],
+            u[3]
+        ];
+    },
+    normalize: function(u){
+        var norm = math.sqrt(u[0]*u[0] + u[1]*u[1] + u[2]*u[2]);
+        return [
+            u[0] / norm,
+            u[1] / norm,
+            u[2] / norm,
+            u[3]
+        ];
+    }
+}
+
+var vec3 = {
+    normalize: function(u){
+        var norm = math.sqrt(u[0]*u[0] + u[1]*u[1] + u[2]*u[2])
+        return [
+            u[0] / norm,
+            u[1] / norm,
+            u[2] / norm
+        ]
     }
 }

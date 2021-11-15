@@ -2,92 +2,304 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>CS438 Demo</title>
+    <title>Danzel Serrano</title>
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.2.1/math.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link href='https://fonts.googleapis.com/css?family=Bebas Neue' rel='stylesheet'>
+    <link href="./resources/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
+    <script type="module">
+        import * as THREE from './resources/threejs/three.module.js';
+        import {ParametricGeometries} from "./resources/threejs/geometries/ParametricGeometries.js";
+        // import {OBJLoader} from "./resources/threejs/OBJLoader.js";
+
+        const mouse = new THREE.Vector2();
+
+        function onMouseMove( event ) {
+            mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+            mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+        }
+
+        window.addEventListener( 'mousemove', onMouseMove, false );
+
+        const random_hex_color_code = () => {
+            let n = (Math.random() * 0xfffff * 1000000).toString(16);
+            return toHex('0x' + n.slice(0, 6));
+        };
+
+        function toHex(str) {
+            var result = '';
+            for (var i=0; i<str.length; i++) {
+                result += str.charCodeAt(i).toString(16);
+            }
+            return result;
+        }
+
+        function main(){
+            const canvas = document.querySelector('#c');
+            canvas.width = document.body.clientWidth;
+            canvas.height = document.body.clientHeight;
+            const renderer = new THREE.WebGLRenderer({canvas});
+
+            const fov = 75;
+            const aspect = document.body.clientWidth/document.body.clientHeight;
+            const near = 0.1;
+            const far = 100;
+            const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+
+            camera.position.z = 2;
+
+
+            const scene = new THREE.Scene();
+
+            // Directional Light
+            const color = 0xFFFFFF;
+            const intensity = 1;
+            const light = new THREE.DirectionalLight(color, intensity);
+            light.position.set(-1, 2, 4);
+            scene.add(light);
+
+            const boxWidth = 2.0;
+            const boxHeight = 2.0;
+            const boxDepth = 2.0;
+            const radius = 0.05;
+            var geometry = new THREE.BoxGeometry(boxWidth,boxHeight,boxDepth);
+            if(Math.random() < 0.4){
+                geometry = new THREE.SphereGeometry();
+            }
+            if(Math.random() < 0.4){
+                geometry = new THREE.TorusGeometry(1,0.6,32,64);
+            }
+            if(Math.random() < 0.2){
+                geometry = new THREE.TorusKnotGeometry(1,0.4,128,16,8,3);
+            }
+            // if(Math.random() < 0.3){
+            //     const objLoader = new OBJLoader();
+            //     objLoader.load('https://graphics.stanford.edu/courses/cs148-10-summer/as3/code/as3/teapot.obj', (root) => {
+            //         scene.add(root);
+            //     });
+            // }
+            // const material = new THREE.MeshBasicMaterial({color: 0x44aa88});
+            // const material = new THREE.MeshPhongMaterial({color: 0x44aa88})
+            const materials = [];
+            // const cube = new THREE.Mesh(geometry, material);
+            const primitives = [];
+            const accel = [];
+            const rotspeed = [];
+            function cell_collision(i){
+                var colliders = [];
+                colliders.push([]);
+                colliders.push([]);
+                colliders.push([]);
+
+                for(var j = 0; j < primitives.length; j++){
+                    if(i == j) continue;
+                    if(Math.abs(primitives[i].position.x - primitives[j].position.x) < radius){
+                        colliders[0].push(j);
+                    }
+                    if(Math.abs(primitives[i].position.y - primitives[j].position.y) < radius){
+                        colliders[1].push(j);
+                    }
+                    if(Math.abs(primitives[i].position.z - primitives[j].position.z) < radius){
+                        colliders[2].push(j);
+                    }
+                }
+                return colliders
+            }
+
+            function avoid(i){
+                var min_dist = 1000;
+                var min_idx = -2;
+                // var dist = Math.sqrt(Math.pow(primitives[i].position.x - mouse.x*((far - near) * Math.tan(((fov/180)*Math.PI)/2)),2) +
+                //     Math.pow(primitives[i].position.y - mouse.y*((far - near) * Math.tan(((fov/180)*Math.PI)/2)),2))
+                // if(dist < 1.0){
+                //     return min_idx;
+                // }
+                for(var j = 0; j < primitives.length; j++){
+                    if(j == i) continue;
+                    var dist = Math.sqrt(Math.pow(primitives[i].position.x - primitives[j].position.x,2) +
+                        Math.pow(primitives[i].position.y - primitives[j].position.y,2));
+                    if(dist < min_dist){
+                        min_idx = j;
+                        min_dist = dist;
+                    }
+                }
+                if(min_dist < 1.75) {
+                    return min_idx;
+                }
+                return -1;
+            }
+
+            for(var i = 0; i < 1000; i++) {
+                materials.push(new THREE.MeshPhongMaterial({color: new THREE.Color(Math.random(), Math.random(), Math.random())}))
+                accel.push(Math.random()/2);
+                rotspeed.push(Math.random()*4);
+                primitives[i] = new THREE.Mesh(geometry, materials[i]);
+                primitives[i].position.x = (Math.random() * 50.0 - 25.0);
+                primitives[i].position.y = (Math.random() * 50.0 - 25.0);
+                primitives[i].position.z = -near + (Math.random());
+                primitives[i].scale.set(radius,radius,radius);
+                scene.add(primitives[i]);
+
+                // var collided = cell_collision(i);
+                // while(collided[0].length > 0 || collided[1].length > 0 || collided[2].length > 0){
+                //     for(var j = 0; j < collided[0].length; j++){
+                //         if(primitives[collided[0][j]].position.x > primitives[i].position.x)
+                //         {
+                //             primitives[collided[0][j]].position.x += (primitives[collided[0][j]].position.x - radius/2)*0.5;
+                //             primitives[i].position.x -= ((primitives[collided[0][j]].position.x - radius/2) - primitives[i].position.x)*0.5;
+                //         }else{
+                //             primitives[collided[0][j]].position.x -= (primitives[i].position.x - radius/2)*0.5;
+                //             primitives[i].position.x += ((primitives[i].position.x - radius/2) - primitives[collided[0][j]].position.x)*0.5;
+                //         }
+                //     }
+                //     for(var j = 0; j < collided[1].length; j++){
+                //         if(primitives[collided[1][j]].position.y > primitives[i].position.y)
+                //         {
+                //             primitives[collided[1][j]].position.y += (primitives[collided[1][j]].position.y - radius/2)*0.5;
+                //             primitives[i].position.y -= ((primitives[collided[1][j]].position.y - radius/2) - primitives[i].position.y)*0.5;
+                //         }else{
+                //             primitives[collided[1][j]].position.y -= (primitives[i].position.y - radius/2)*0.5;
+                //             primitives[i].position.y += ((primitives[i].position.y - radius/2) - primitives[collided[1][j]].position.y)*0.5;
+                //         }
+                //     }
+                //     for(var j = 0; j < collided[2].length; j++){
+                //         if(primitives[collided[2][j]].position.z > primitives[i].position.z)
+                //         {
+                //             primitives[collided[2][j]].position.z += (primitives[collided[2][j]].position.z - radius/2)*0.5;
+                //             primitives[i].position.z -= ((primitives[collided[2][j]].position.z - radius/2) - primitives[i].position.z)*0.5;
+                //         }else{
+                //             primitives[collided[2][j]].position.z -= (primitives[i].position.z - radius/2)*0.5;
+                //             primitives[i].position.z += ((primitives[i].position.z - radius/2) - primitives[collided[2][j]].position.z)*0.5;
+                //         }
+                //     }
+                //     collided = cell_collision(i);
+                // }
+            }
+
+            function resizeRendererToDisplaySize(renderer) {
+                const canvas = renderer.domElement;
+                const width = canvas.clientWidth;
+                const height = canvas.clientHeight;
+                const needResize = canvas.width !== width || canvas.height !== height;
+                if (needResize) {
+                    renderer.setSize(width, height, false);
+                }
+                return needResize;
+            }
+            console.log(mouse.x*((far - near) * Math.tan(((fov/180)*Math.PI)/2)),mouse.y*((far - near) * Math.tan(((fov/180)*Math.PI)/2)));
+            function render(time){
+                time *= 0.001; // convert to seconds
+                if (resizeRendererToDisplaySize(renderer)) {
+                    const canvas = renderer.domElement;
+                    camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                    camera.updateProjectionMatrix();
+                }
+
+                for(var i = 0; i < primitives.length; i++) {
+                    var a = avoid(i);
+                    // console.log(mouse.x*(canvas.clientWidth/2.0),mouse.y*(canvas.clientHeight/2.0));
+                    // console.log(primitives[i].position.x,primitives[i].position.y)
+                    if(a != -1 && a != -2){
+                        // primitives[i].position.x += 0.01*((primitives[i].position.x - primitives[a].position.x) > 0.0 ? 1.0 : -1.0)
+                        // primitives[i].position.y += 0.01*((primitives[i].position.y - primitives[a].position.y) > 0.0 ? 1.0 : -1.0)
+
+                    }else if(a == -2){
+                        console.log(mouse.x*(canvas.clientWidth/2.0),mouse.y*(canvas.clientHeight/2.0));
+                        primitives[i].position.x -= 0.01*((primitives[i].position.x - mouse.x*(canvas.clientWidth/2.0)) > 0.0 ? 1.0 : -1.0)
+                        primitives[i].position.y -= 0.01*((primitives[i].position.y - mouse.y*(canvas.clientHeight/2.0)) > 0.0 ? 1.0 : -1.0)
+                    }
+                    primitives[i].rotation.x = time * 0.1;
+                    primitives[i].rotation.y = time * rotspeed[i];
+                    primitives[i].position.z -= 0.03*Math.sin(time*accel[i]*1.4);
+                    // console.log(Math.sin(time*0.5))
+                    if(primitives[i].position.z <= -far) {
+                        primitives[i].position.x = (Math.random() * 50.0 - 25.0);
+                        primitives[i].position.y = (Math.random() * 50.0 - 25.0);
+                        primitives[i].position.z = -near+0.1;
+                    }else if(primitives[i].position.z >= 1){
+                        primitives[i].position.x = (Math.random() * 50.0 - 25.0);
+                        primitives[i].position.y = (Math.random() * 50.0 - 25.0);
+                        primitives[i].position.z = -far+0.1;
+                    }
+                }
+                renderer.render(scene,camera);
+                requestAnimationFrame(render);
+            }
+
+            requestAnimationFrame(render);
+        }
+
+        main();
+    </script>
 </head>
 <body>
-<div>
-    <canvas id="gl_surface" tabindex="0">
-        Your browser does not support HTML5
-    </canvas>
-    <div id="overlay" class="container fade-in-title">
-        <h1 id="title" class="text-center"></h1>
-        <div class="text-center">
-            <img src="images/profile.jpeg" width = "200" height = "200" class="rounded-circle" alt="Danzel Serrano">
-        </div>
-        <h4 id="bio" class="text-center">M.S. Data Science (Computational Track) <br> B.S. Computer Science (Minor in Applied Mathematics)</h4>
+<canvas id="c">
+    Your browser does not support HTML5
+</canvas>
+<div id="overlay" class="container fade-in-title">
+    <h1 id="title" class="text-center">Danzel Serrano</h1>
+    <div class="text-center">
+        <img src="images/profile.jpeg" width = "200" height = "200" class="rounded-circle" alt="Danzel Serrano">
     </div>
+    <h4 id="bio" class="text-center">I've decided to create a website to put my ideas.</h4>
+    <p id="footnotes" class="text-center">(web page under construction)<br><br> </p>
+    <div class="social-media text-center w-100">
+        <div class="p-2"><a class="btn btn-primary" style="background-color: #55acee;" href="https://twitter.com/dependanz" role="button"
+        ><i class="fab fa-twitter"></i
+        ></a></div>
+        <div class="p-2"><a class="btn btn-primary" style="background-color: #3b5998;" href="https://www.facebook.com/dandandan0" role="button"
+        ><i class="fab fa-facebook-f"></i
+        ></a></div>
+        <div class="p-2">
+            <a class="btn btn-primary" style="background-color: #ac2bac;" href="https://www.instagram.com/deezyyeezy/" role="button"
+            ><i class="fab fa-instagram"></i
+            ></a></div>
+        <div class="p-2"><a class="btn btn-primary" style="background-color: #0082ca;" href="https://www.linkedin.com/in/danzel-serrano-542870181/" role="button"
+        ><i class="fab fa-linkedin-in"></i
+        ></a></div>
+        <div class="p-2"><a class="btn btn-primary" style="background-color: #ff4d00;" href="https://soundcloud.com/danzieboy" role="button"
+        ><i class="fab fa-soundcloud"></i
+        ></a></div>
+        <div class="p-2"><a class="btn btn-primary" style="background-color: #333333;" href="https://github.com/Deziox" role="button"
+        ><i class="fab fa-github"></i
+        ></a></div>
+    </div>
+    <div class="border border-success bg-success p-2 text-dark bg-opacity-50">
+        <h4 id="bio" class="text-center">
+            M.S. Data Science
+            <br> B.S. Computer Science (Minor in Applied Mathematics)
+            <br><br>
+        </h4>
+    </div>
+    <div class="border border-success">
+        <h4 id="bio" class="text-center" style="text-decoration: underline">This website will contain my work and ideas in the following research domains:</h4>
+        <ol>
+            <li class="list text-center">Machine Learning / Reinforcement Learning</li>
+            <li class="list text-center">Procedural / Neural Audio Synthesis</li>
+            <li class="list text-center">Music Information Retrieval</li>
+            <li class="list text-center">Computational Neuroscience</li>
+        </ol><br>
+    </div>
+    <div class="border border-success">
+        <h4 id="bio" class="text-center" style="text-decoration: underline">Other Topics of interest</h4>
+        <ol>
+            <li class="list text-center">Stochastic Generative Models / Evolutionary Computing</li>
+            <li class="list text-center">Computer Graphics / Neural Rendering</li>
+            <li class="list text-center">Probability Theory / Measure Theory / Stochastic Processes</li>
+            <li class="list text-center">The study of Analysis (I love Abstract Maths)</li>
+            <li class="list text-center">BCI for Music Production / Mastering / Generation</li>
+        </ol><br>
+    </div>
+    <div style="background-color: darkgreen; border-color: darkgreen">
+        <h4 id="bio" class="text-center" style="text-decoration: underline">What am I thinking about this week?</h4>
+        <h2 id="thought" class="text-left">
+            The Transformer Model is wonderful for working with sequential data, but I still think it would be great to improve upon a model which learns sequentially, keeping an internal "state," possibly even getting rid of the state altogether.
+            <br><br>I have an idea for a dynamic representation of discrete signals which is purely geometrical, which may or may not be successful in encoding higher level representations in the time domain.
+            <br><br>I am currently testing this new representation and will put results once I finish this website.
+        </h2><br>
+    </div>
+    <br><br><br>
 </div>
-    <div id="shaders" hidden>
-        <p id="vertex-shader">
-            attribute vec4 a_position;
-            attribute vec4 a_color;
-            attribute vec3 a_normal;
-            varying vec4 v_color;
-            varying vec3 v_normal;
-            varying vec4 v_position;
-
-            uniform mat4 u_matrix;
-            uniform mat3 u_N;
-            uniform float aspectRatio;
-
-            void main() {
-                vec4 t_pos = u_matrix * a_position;
-
-                float w = t_pos.w;
-                float x_p = (t_pos.x) / aspectRatio;
-                float y_p = t_pos.y;
-                float z_p = t_pos.z;
-
-                v_color = a_color;
-                v_normal = (u_N * a_normal);
-                v_position = vec4(t_pos.xyz/t_pos.w,0.0);
-
-                gl_Position = vec4(x_p,y_p,z_p,w);
-            }
-        </p>
-        <p id="fragment-shader">
-            precision mediump float;
-            varying vec4 v_color;
-            varying vec3 v_normal;
-            varying vec4 v_position;
-            uniform vec4 u_eye;
-            uniform vec4 u_light;
-
-            void main() {
-                vec4 e = vec4(((-u_eye) - v_position).xyz,0.0);
-                vec4 l = vec4((u_light - v_position).xyz,0.0);
-                vec4 h = e + l;
-                h = normalize(h);
-
-                float L_i = 0.5;
-
-                float k_d = 0.7;
-                float d = length(u_light - v_position);
-
-                float q = 1.0;
-                float k_s = 1.0;
-
-                float k_a = 0.8;
-
-                float L_d = k_d * max(0.0,dot(v_normal,l.xyz)) * (L_i / (d * d));
-                float L_s = k_s * pow(max(0.0,dot(v_normal,h.xyz)),q) * (L_i / (d * d));
-                float L_a = k_a * L_i;
-                // gl_FragColor = v_color;
-                // gl_FragColor = vec4(vec3(0.4,0.4,0.4)*(L_a + L_d + L_s),1.0);
-                gl_FragColor = vec4(v_color.xyz*(L_a + L_d + L_s),1.0);
-                // gl_FragColor = vec4(v_normal,1.0);
-                // gl_FragColor.rgb = normalize(v_normal).xyz;
-            }
-        </p>
-    </div>
-    <br/>
-    <script src="mathutil.js"></script>
-    <script src="Geometry.js"></script>
-    <script src="app.js"></script>
 </body>
 </html>
