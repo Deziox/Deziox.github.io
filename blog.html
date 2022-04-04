@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>blog - danzel serrano</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.2.1/math.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href='https://fonts.googleapis.com/css?family=Bebas Neue' rel='stylesheet'>
+    <link href="./resources/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body class="blog">
+<div id="overlay" class="container fade-in-title">
+    <h1 id="title-blog" class="text-center">blog</h1>
+    <p id="blog-footnotes" class="text-center">(web page under construction)</p>
+    <div id="post-container">
+    </div>
+</div>
+<script>
+    post_container = document.getElementById("post-container");
+    post_container.innerHTML += '<div class="card">\n' +
+        '                           <div class="card-body">\n' +
+        '                                This is some text within a card body.\n' +
+        '                           </div>\n' +
+        '                        </div>'
+</script>
+</body>
+</html>

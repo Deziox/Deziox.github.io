@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link href='https://fonts.googleapis.com/css?family=Bebas Neue' rel='stylesheet'>
     <link href="./resources/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script type="module">
         import * as THREE from './resources/threejs/three.module.js';
 
@@ -232,6 +234,7 @@
     </script>
 </head>
 <body>
+<div class="curtain" id="curtain"></div>
 <canvas id="c">
     Your browser does not support HTML5
 </canvas>
@@ -263,6 +266,12 @@
         ><i class="fab fa-github"></i
         ></a></div>
     </div>
+    <br>
+    <div class="social-media text-center w-100">
+        <div class="p-2"><a class="btn btn-primary" style="background-color: #ffa4a4; color: #000000" href="./files/Danzel Serrano - Resume Main.pdf" role="button">CV</a></div>
+        <div class="p-2" id="blog-btn"><a class="btn btn-primary" style="background-color: #ffffff; color: #000000" href="#" role="button">blog</a></div>
+        <div class="p-2"><a class="btn btn-primary" style="background-color: #8cffde; color: #000000" href="https://sites.google.com/view/sinclab/home" role="button">SInC Lab</a></div>
+    </div>
     <div class="border border-success bg-success p-2 text-dark bg-opacity-50">
         <h3 id="edu-title" class="text-center" style="text-decoration: underline; margin-bottom: 0px">
             Education:
@@ -283,29 +292,55 @@
     <div class="border border-success">
         <h4 id="bio" class="text-center" style="text-decoration: underline">This website will contain my work and ideas in the following research domains:</h4>
         <ol>
-            <li class="list text-center">Machine Learning / Reinforcement Learning</li>
-            <li class="list text-center">Procedural / Neural Audio Synthesis</li>
+            <li class="list text-center">Artificial Intelligence</li>
+            <li class="list text-center">Neural Audio Synthesis / Deep Learning for General DSP</li>
             <li class="list text-center">Music Information Retrieval</li>
-            <li class="list text-center">Computational Neuroscience</li>
         </ol><br>
     </div>
     <div class="border border-success">
         <h4 id="bio" class="text-center" style="text-decoration: underline">Other Topics of interest</h4>
         <ol>
+            <li class="list text-center">BCI for Music Production / Mastering / Generation</li>
+            <li class="list text-center">Neuroscience of Audition</li>
             <li class="list text-center">Stochastic Generative Models / Evolutionary Computing</li>
             <li class="list text-center">Computer Graphics / Neural Rendering</li>
-            <li class="list text-center">Probability Theory / Measure Theory / Stochastic Processes</li>
-            <li class="list text-center">The study of Analysis (I love Abstract Maths)</li>
-            <li class="list text-center">BCI for Music Production / Mastering / Generation</li>
+            <li class="list text-center">Probability Theory / Measure Theory / Stochastic Processes (Pure Maths)</li>
         </ol><br>
     </div>
     <div style="background-color: darkgreen; border-color: darkgreen">
         <h4 id="bio" class="text-center" style="text-decoration: underline">What am I thinking about this week?</h4>
         <h2 id="thought" class="text-left">
-            Is there a way to discriminate between sounds rendered from a speaker membrane and natural sounds?
+            What would it take to create fair accessibility for all fields of research? Could we generalize the interface instead of creating
+            specialized ones per task?
+            <br><br>
+            Could we also use the pattern of agent based AI in developing an adaptive context-based computer aid for those who have sensory impairments?
+            That is, can we model an abstract environment, in which a person with sensory impairment is an agent taking actions, where the agent
+            can take a <br>discrete course of action based on the current state of the environment?
+            <br><br>
+            The environment being any software being used on a computer, the sensors being possible observable variables and computer vision,
+            actuators being a finite set of buttons, and the agent being the person who has sensory impairment.
         </h2><br>
     </div>
     <br><br><br>
 </div>
+<script>
+    var id = null;
+    var alpha = 0.0;
+    blog_button = document.getElementById("blog-btn");
+    curtain = document.getElementById("curtain")
+    blog_button.addEventListener("click", function() {
+        clearInterval(id);
+        id = setInterval(frame, 10);
+        function frame() {
+            if (alpha >= 1.0) {
+                clearInterval(id);
+                location.assign("./blog.html");
+            } else {
+                alpha += 0.025;
+                curtain.style.background = 'rgba(255,255,255,0.0)'.replace(/[^,]+(?=\))/, alpha.toString());
+            }
+        }
+    });
+</script>
 </body>
 </html>
