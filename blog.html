@@ -12,13 +12,35 @@
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body class="blog">
+<div class="curtain" id="curtain"></div>
 <div id="overlay" class="container fade-in-title">
     <h1 id="title-blog" class="text-center">blog</h1>
     <p id="blog-footnotes" class="text-center">(web page under construction)</p>
+    <div class="social-media text-center w-100">
+        <div class="p-2" id="home-btn"><a class="btn btn-primary" style="background-color: #ffffff; color: #000000" href="#" role="button">home</a></div>
+    </div>
     <div id="post-container">
     </div>
 </div>
 <script>
+    var id = null;
+    var alpha = 0.0;
+    home_button = document.getElementById("home-btn");
+    curtain = document.getElementById("curtain")
+    home_button.addEventListener("click", function() {
+        clearInterval(id);
+        id = setInterval(frame, 10);
+        function frame() {
+            if (alpha >= 1.0) {
+                clearInterval(id);
+                location.assign("./index.html");
+            } else {
+                alpha += 0.02;
+                curtain.style.background = 'rgba(0,0,0,0.0)'.replace(/[^,]+(?=\))/, alpha.toString());
+            }
+        }
+    });
+
     post_container = document.getElementById("post-container");
     post_container.innerHTML += '<div class="card">\n' +
         '                           <div class="card-body">\n' +

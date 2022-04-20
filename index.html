@@ -324,10 +324,13 @@
     <br><br><br>
 </div>
 <script>
+
     var id = null;
-    var alpha = 0.0;
+    var alpha = 1.0;
     blog_button = document.getElementById("blog-btn");
     curtain = document.getElementById("curtain")
+    curtain.style.background = 'rgba(0,0,0,1.0)'
+
     blog_button.addEventListener("click", function() {
         clearInterval(id);
         id = setInterval(frame, 10);
@@ -341,6 +344,17 @@
             }
         }
     });
+
+    clearInterval(id);
+    id = setInterval(frame,10);
+    function frame() {
+        if (alpha <= 0.0) {
+            clearInterval(id);
+        } else {
+            alpha -= 0.025;
+            curtain.style.background = 'rgba(0,0,0,1.0)'.replace(/[^,]+(?=\))/, alpha.toString());
+        }
+    }
 </script>
 </body>
 </html>
