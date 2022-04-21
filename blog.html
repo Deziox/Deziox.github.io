@@ -41,6 +41,12 @@
         }
     });
 
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", "./blog/post1.json", false); // false for synchronous request
+    xmlHttp.send( null );
+    console.log(JSON.parse(xmlHttp.responseText))
+
+
     post_container = document.getElementById("post-container");
     post_container.innerHTML += '<div class="card">\n' +
         '                           <div class="card-body">\n' +
