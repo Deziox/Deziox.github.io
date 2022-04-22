@@ -42,15 +42,23 @@
     });
 
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "GET", "./blog/post1.json", false); // false for synchronous request
+    xmlHttp.open( "GET", "./blog/meta.json", false);
     xmlHttp.send( null );
-    console.log(JSON.parse(xmlHttp.responseText))
+    current = (JSON.parse(xmlHttp.responseText)['num_posts'] - 1)
 
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", "./blog/post1.json", false);
+    xmlHttp.send( null );
+    post = JSON.parse(xmlHttp.responseText)
+
+    console.log(post[current.toString()]);
 
     post_container = document.getElementById("post-container");
     post_container.innerHTML += '<div class="card">\n' +
         '                           <div class="card-body">\n' +
-        '                                This is some text within a card body.\n' +
+        '                               <div id="blog-title">' +
+                post[current.toString()]['title'] +
+        '                               </div>' +
         '                           </div>\n' +
         '                        </div>'
 </script>
