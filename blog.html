@@ -7,6 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.2.1/math.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link href='https://fonts.googleapis.com/css?family=Bebas Neue' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Comfortaa' rel='stylesheet'>
     <link href="./resources/fontawesome-free-5.15.4-web/css/all.css" rel="stylesheet">
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -51,13 +52,22 @@
     xmlHttp.send( null );
     post = JSON.parse(xmlHttp.responseText)
 
-    console.log(post[current.toString()]);
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", post[current.toString()]['body'], false);
+    xmlHttp.send( null );
+    body = xmlHttp.responseText
 
     post_container = document.getElementById("post-container");
     post_container.innerHTML += '<div class="card">\n' +
         '                           <div class="card-body">\n' +
-        '                               <div id="blog-title">' +
+        '                               <div id="blog-title"><u>' +
                 post[current.toString()]['title'] +
+        '                               </u></div>' +
+        '                               <div id="blog-bio">' +
+        post[current.toString()]['date'] +
+        '                               </div>' +
+        '                               <div id="blog-body">' +
+        body +
         '                               </div>' +
         '                           </div>\n' +
         '                        </div>'

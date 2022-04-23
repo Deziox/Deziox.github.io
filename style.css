@@ -239,3 +239,19 @@ li.list{
     font-size: 30px;
     font-family: 'Bebas Neue';
 }
+
+#blog-bio {
+    text-align: center;
+    position: relative;
+    color: black;
+    font-size: 15px;
+    font-family: 'Comfortaa';
+}
+
+#blog-body {
+    text-align: left;
+    position: relative;
+    color: black;
+    font-size: 18px;
+    font-family: Arial;
+}

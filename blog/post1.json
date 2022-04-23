@@ -3,7 +3,8 @@
         "title" : "introduction | who am i?",
         "date" : "04-21-2022",
         "bio" : "",
-        "body" : "",
+        "body" : "./blog/posts/introduction.html",
         "foot" : ""
     }
 }
+
